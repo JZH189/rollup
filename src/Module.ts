@@ -642,6 +642,7 @@ export default class Module {
 	}
 
 	include(): void {
+		//context => {"brokenFlow":0,"includedCallArguments":{},"includedLabels":{}}
 		const context = createInclusionContext();
 		if (this.ast!.shouldBeIncluded(context)) this.ast!.include(context, false);
 	}
@@ -706,6 +707,7 @@ export default class Module {
 
 	render(options: RenderOptions): { source: MagicString; usesTopLevelAwait: boolean } {
 		const source = this.magicString.clone();
+		//此处其实调用的就是Program.render方法
 		this.ast!.render(source, options);
 		source.trim();
 		const { usesTopLevelAwait } = this.astContext;
@@ -744,6 +746,7 @@ export default class Module {
 		this.updateOptions(moduleOptions);
 
 		if (!ast) {
+			//调用acorn.parse()方法解析成ast
 			ast = this.tryParse();
 		}
 
@@ -752,15 +755,14 @@ export default class Module {
 
 		this.resolvedIds = resolvedIds || Object.create(null);
 
-		// By default, `id` is the file name. Custom resolvers and loaders
-		// can change that, but it makes sense to use it for the source file name
+		// 使用“id”作为源文件名是有意义的
 		const fileName = this.id;
 
 		this.magicString = new MagicString(code, {
 			filename: (this.excludeFromSourcemap ? null : fileName)!, // don't include plugin helpers in sourcemap
 			indentExclusionRanges: []
 		});
-
+		//定义模块的context，包括根据import、export获取模块的导入和导出对象
 		this.astContext = {
 			addDynamicImport: this.addDynamicImport.bind(this),
 			addExport: this.addExport.bind(this),
@@ -789,9 +791,11 @@ export default class Module {
 			usesTopLevelAwait: false,
 			warn: this.warn.bind(this)
 		};
-
+		//创建基于模块的作用域
 		this.scope = new ModuleScope(this.graph.scope, this.astContext);
+		//创建命名空间
 		this.namespace = new NamespaceVariable(this.astContext);
+		//创建Program,设置node.included = false初始化node属性和方法
 		this.ast = new Program(ast, { context: this.astContext, type: 'Module' }, this.scope);
 		this.info.ast = ast;
 

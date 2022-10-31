@@ -56,6 +56,7 @@ export default class Bundle {
 			timeStart('generate chunks', 2);
 
 			const getHashPlaceholder = getHashPlaceholderGenerator();
+			// chunks => [chunk]
 			const chunks = await this.generateChunks(outputBundle, getHashPlaceholder);
 			if (chunks.length > 1) {
 				validateOptionsForMultiChunkOutput(this.outputOptions, this.inputOptions.onwarn);
@@ -173,6 +174,7 @@ export default class Bundle {
 		);
 		const chunks: Chunk[] = [];
 		const chunkByModule = new Map<Module, Chunk>();
+		// preserveModules = false
 		for (const { alias, modules } of inlineDynamicImports
 			? [{ alias: null, modules: includedModules }]
 			: preserveModules

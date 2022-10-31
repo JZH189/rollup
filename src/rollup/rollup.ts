@@ -41,12 +41,13 @@ export async function rollupInternal(
 	rawInputOptions: RollupOptions,
 	watcher: RollupWatcher | null
 ): Promise<RollupBuild> {
+	//格式化inputOptions
 	const { options: inputOptions, unsetOptions: unsetInputOptions } = await getInputOptions(
 		rawInputOptions,
 		watcher !== null
 	);
 	initialiseTimers(inputOptions);
-
+	//创建图形
 	const graph = new Graph(inputOptions, watcher);
 
 	// remove the cache option from the memory after graph creation (cache is not used anymore)

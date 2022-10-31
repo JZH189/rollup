@@ -49,26 +49,27 @@ function normalizeEntryModules(
 }
 
 export default class Graph {
-	readonly acornParser: typeof acorn.Parser;
-	readonly cachedModules = new Map<string, ModuleJSON>();
+	readonly acornParser: typeof acorn.Parser;//使用acornParser解析ast
+	readonly cachedModules = new Map<string, ModuleJSON>();//缓存的modules,提升性能
 	readonly deoptimizationTracker = new PathTracker();
-	entryModules: Module[] = [];
+	entryModules: Module[] = []; //入口模块
 	readonly fileOperationQueue: Queue;
-	readonly moduleLoader: ModuleLoader;
-	readonly modulesById = new Map<string, Module | ExternalModule>();
+	readonly moduleLoader: ModuleLoader; //模块加载器
+	readonly modulesById = new Map<string, Module | ExternalModule>(); //使用Map结构来保存modules
 	needsTreeshakingPass = false;
-	phase: BuildPhase = BuildPhase.LOAD_AND_PARSE;
-	readonly pluginDriver: PluginDriver;
-	readonly scope = new GlobalScope();
+	phase: BuildPhase = BuildPhase.LOAD_AND_PARSE; // 构建的 phase 标志
+	readonly pluginDriver: PluginDriver; // 插件驱动
+	readonly scope = new GlobalScope(); // 作用域
 	readonly watchFiles: Record<string, true> = Object.create(null);
 	watchMode = false;
 
-	private readonly externalModules: ExternalModule[] = [];
-	private implicitEntryModules: Module[] = [];
-	private modules: Module[] = [];
+	private readonly externalModules: ExternalModule[] = [];//外部的modules
+	private implicitEntryModules: Module[] = [];//隐式入口模块
+	private modules: Module[] = []; //保存的模块
 	private declare pluginCache?: Record<string, SerializablePluginCache>;
 
 	constructor(private readonly options: NormalizedInputOptions, watcher: RollupWatcher | null) {
+		//初始化的时候option.cache = undefined
 		if (options.cache !== false) {
 			if (options.cache?.modules) {
 				for (const module of options.cache.modules) this.cachedModules.set(module.id, module);
@@ -81,7 +82,7 @@ export default class Graph {
 				for (const value of Object.values(cache)) value[0]++;
 			}
 		}
-
+		// 默认情况下 watcher 为null
 		if (watcher) {
 			this.watchMode = true;
 			const handleChange = (...parameters: Parameters<WatchChangeHook>) =>
@@ -90,23 +91,29 @@ export default class Graph {
 			watcher.onCurrentRun('change', handleChange);
 			watcher.onCurrentRun('close', handleClose);
 		}
+		//初始化插件
 		this.pluginDriver = new PluginDriver(this, options, options.plugins, this.pluginCache);
+		//使用acorn解析ast，并且扩展用户自定义配置
 		this.acornParser = acorn.Parser.extend(...(options.acornInjectPlugins as any[]));
+		//初始化 moduleLoader
 		this.moduleLoader = new ModuleLoader(this, this.modulesById, this.options, this.pluginDriver);
 		this.fileOperationQueue = new Queue(options.maxParallelFileOps);
 	}
 
 	async build(): Promise<void> {
 		timeStart('generate module graph', 2);
+		//生成模块依赖图
 		await this.generateModuleGraph();
 		timeEnd('generate module graph', 2);
 
 		timeStart('sort and bind modules', 2);
 		this.phase = BuildPhase.ANALYSE;
+		//按照引入顺序排序模块
 		this.sortModules();
 		timeEnd('sort and bind modules', 2);
 
 		timeStart('mark included statements', 2);
+		//遍历所有的ast.node并且修改node.included的值
 		this.includeStatements();
 		timeEnd('mark included statements', 2);
 
@@ -166,6 +173,9 @@ export default class Graph {
 	};
 
 	private async generateModuleGraph(): Promise<void> {
+		/**
+		 * normalizeEntryModules(this.options.input) => '[{"fileName":null,"id":"c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example/index.js","implicitlyLoadedAfter":[],"name":null}]'
+		 */
 		({ entryModules: this.entryModules, implicitEntryModules: this.implicitEntryModules } =
 			await this.moduleLoader.addEntryModules(normalizeEntryModules(this.options.input), true));
 		if (this.entryModules.length === 0) {
@@ -199,8 +209,7 @@ export default class Graph {
 					}
 				}
 				if (treeshakingPass === 1) {
-					// We only include exports after the first pass to avoid issues with
-					// the TDZ detection logic
+					// 仅需在第一次的时候将模块内的导出语句包含进来
 					for (const module of [...this.entryModules, ...this.implicitEntryModules]) {
 						if (module.preserveSignature !== false) {
 							module.includeAllExports(false);

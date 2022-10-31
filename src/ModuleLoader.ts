@@ -119,6 +119,7 @@ export class ModuleLoader {
 					this.loadEntryModule(id, true, importer, null)
 				)
 			).then(entryModules => {
+				// entryModules => [Module]
 				for (const [index, entryModule] of entryModules.entries()) {
 					entryModule.isUserDefinedEntryPoint =
 						entryModule.isUserDefinedEntryPoint || isUserDefined;
@@ -143,6 +144,7 @@ export class ModuleLoader {
 						);
 					}
 				}
+				//排序入口模板
 				this.indexedEntryModules.sort(({ index: indexA }, { index: indexB }) =>
 					indexA > indexB ? 1 : -1
 				);
@@ -522,7 +524,7 @@ export class ModuleLoader {
 						: resolveIdResult
 			};
 		}
-
+		//id => c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example\\index.js
 		const id = makeAbsoluteExternalsRelative
 			? normalizeRelativeExternalId(source, importer)
 			: source;
@@ -639,6 +641,7 @@ export class ModuleLoader {
 		importer: string | undefined,
 		implicitlyLoadedBefore: string | null
 	): Promise<Module> {
+		//resolveIdResult => 'c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example\\index.js'
 		const resolveIdResult = await resolveId(
 			unresolvedId,
 			importer,
