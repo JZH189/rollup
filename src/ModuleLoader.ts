@@ -299,6 +299,9 @@ export class ModuleLoader {
 			}
 			module.setSource(cachedModule);
 		} else {
+			/**
+			 * 更新module.info的moduleSideEffects、syntheticNamedExports、meta，默认都是undefined
+			 */
 			module.updateOptions(sourceDescription);
 			module.setSource(
 				await transform(sourceDescription, module, this.pluginDriver, this.options.onwarn)

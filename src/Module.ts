@@ -249,7 +249,7 @@ export default class Module {
 	private readonly reexportDescriptions = new Map<string, ReexportDescription>();
 	private relevantDependencies: Set<Module | ExternalModule> | null = null;
 	private readonly syntheticExports = new Map<string, SyntheticNamedExportVariable>();
-	private syntheticNamespace: Variable | null | undefined = null;
+	private syntheticNamespace: Variable | null | undefined = null; //合成命名空间
 	private transformDependencies: string[] = [];
 	private transitiveReexports: string[] | null = null;
 
@@ -263,9 +263,9 @@ export default class Module {
 		meta: CustomPluginOptions,
 		assertions: Record<string, string>
 	) {
-		this.excludeFromSourcemap = /\0/.test(id);
-		this.context = options.moduleContext(id);
-		this.preserveSignature = this.options.preserveEntrySignatures;
+		this.excludeFromSourcemap = /\0/.test(id);  
+		this.context = options.moduleContext(id);  //初始化为'undefined'
+		this.preserveSignature = this.options.preserveEntrySignatures; //初始值为'exports-only'
 
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const module = this;
@@ -351,7 +351,7 @@ export default class Module {
 			moduleSideEffects,
 			syntheticNamedExports
 		};
-		// Hide the deprecated key so that it only warns when accessed explicitly
+		// 弃用 hasModuleSideEffects 改为 moduleSideEffects，使其仅在显式访问时发出警告
 		// eslint-disable-next-line unicorn/consistent-destructuring
 		Object.defineProperty(this.info, 'hasModuleSideEffects', {
 			enumerable: false
