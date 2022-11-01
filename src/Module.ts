@@ -984,10 +984,33 @@ export default class Module {
 		const source = node.source.value;
 		this.addSource(source, node);
 		for (const specifier of node.specifiers) {
+			//判断是否是默认导入，例如 import Vue from 'Vue'
 			const isDefault = specifier.type === NodeType.ImportDefaultSpecifier;
+			//判断是否为带命名空间的导入，例如 import * as acorn from 'acorn';
 			const isNamespace = specifier.type === NodeType.ImportNamespaceSpecifier;
 
 			const name = isDefault ? 'default' : isNamespace ? '*' : specifier.imported.name;
+			/*
+			this.importDescriptions = {
+				"age": {
+						"module": null,
+						"name": "age",
+						"source": "./user",
+						"start": 9
+				},
+				"foo": {
+						"module": null,
+						"name": "foo",
+						"source": "./user",
+						"start": 14
+				},
+				"name": {
+						"module": null,
+						"name": "name",
+						"source": "./user",
+						"start": 19
+				}
+			*/
 			this.importDescriptions.set(specifier.local.name, {
 				module: null as never, // filled in later
 				name,

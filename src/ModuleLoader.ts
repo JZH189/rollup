@@ -409,6 +409,7 @@ export class ModuleLoader {
 		this.moduleLoadPromises.set(module, loadPromise);
 		const resolveDependencyPromises = await loadPromise;
 		if (!isPreload) {
+			// 加载依赖模块
 			await this.fetchModuleDependencies(module, ...resolveDependencyPromises);
 		} else if (isPreload === RESOLVE_DEPENDENCIES) {
 			await loadAndResolveDependenciesPromise;
@@ -426,6 +427,7 @@ export class ModuleLoader {
 			return;
 		}
 		this.modulesWithLoadedDependencies.add(module);
+		// 设置模块的 dependences 和依赖模块的 importers
 		await Promise.all([
 			this.fetchStaticDependencies(module, resolveStaticDependencyPromises),
 			this.fetchDynamicDependencies(module, resolveDynamicDependencyPromises)
@@ -481,6 +483,7 @@ export class ModuleLoader {
 				)
 			)
 		)) {
+			// 设置模块的 dependences 和依赖模块的 importers
 			module.dependencies.add(dependency);
 			dependency.importers.push(module.id);
 		}

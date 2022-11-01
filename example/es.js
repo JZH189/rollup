@@ -16,4 +16,4 @@ function hello() {
 	console.log(`hello! ${name}`);
 }
 
-export default hello;
+export { hello as default };

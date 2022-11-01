@@ -102,7 +102,14 @@ export default class Graph {
 
 	async build(): Promise<void> {
 		timeStart('generate module graph', 2);
-		//生成模块依赖图
+		/**
+		 * generateModuleGraph 方法主要做了以下事情：
+		 * 1、通过 input 配置找出入口模块(entryModules)
+		 * 2、从 entryModules 分析、读取所有依赖模块并生成 Module 实例
+		 * 3、设置各模块的 dependences 和依赖模块的 importers
+		 * 4、创建全局作用域、模块作用域
+		 * 5、添加 watchFiles
+		 */
 		await this.generateModuleGraph();
 		timeEnd('generate module graph', 2);
 

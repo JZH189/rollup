@@ -12,7 +12,7 @@ export default class Program extends NodeBase {
 	private hasCachedEffect = false;
 
 	hasEffects(context: HasEffectsContext): boolean {
-		// We are caching here to later more efficiently identify side-effect-free modules
+		// 设置 hasCachedEffect 提升效率
 		if (this.hasCachedEffect) return true;
 		for (const node of this.body) {
 			if (node.hasEffects(context)) {
