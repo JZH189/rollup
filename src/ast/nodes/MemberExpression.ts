@@ -223,6 +223,7 @@ export default class MemberExpression extends NodeBase implements DeoptimizableE
 
 	hasEffects(context: HasEffectsContext): boolean {
 		if (!this.deoptimized) this.applyDeoptimizations();
+		//console.log调用一般视为no-effects
 		return (
 			this.property.hasEffects(context) ||
 			this.object.hasEffects(context) ||
@@ -338,6 +339,7 @@ export default class MemberExpression extends NodeBase implements DeoptimizableE
 			.treeshake as NormalizedTreeshakingOptions;
 		if (
 			// Namespaces are not bound and should not be deoptimized
+			// console.log类似这样的语句命名空间未绑定，不应取消优化
 			this.bound &&
 			propertyReadSideEffects &&
 			!(this.variable || this.isUndefined)

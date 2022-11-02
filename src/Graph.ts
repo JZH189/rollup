@@ -218,6 +218,7 @@ export default class Graph {
 				if (treeshakingPass === 1) {
 					// 仅需在第一次的时候将模块内的导出语句包含进来
 					for (const module of [...this.entryModules, ...this.implicitEntryModules]) {
+						//module.preserveSignature => 'exports-only'
 						if (module.preserveSignature !== false) {
 							module.includeAllExports(false);
 							this.needsTreeshakingPass = true;
@@ -225,7 +226,7 @@ export default class Graph {
 					}
 				}
 				timeEnd(`treeshaking pass ${treeshakingPass++}`, 3);
-			} while (this.needsTreeshakingPass);
+			} while (this.needsTreeshakingPass); //this.needsTreeshakingPass为true的时候才会继续执行treeShaking逻辑
 		} else {
 			for (const module of this.modules) module.includeAllInBundle();
 		}

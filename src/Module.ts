@@ -202,7 +202,7 @@ export default class Module {
 		priority: number;
 	}[] = [];
 	readonly cycles = new Set<symbol>();
-	readonly dependencies = new Set<Module | ExternalModule>();
+	readonly dependencies = new Set<Module | ExternalModule>(); //依赖的模块
 	readonly dynamicDependencies = new Set<Module | ExternalModule>();
 	readonly dynamicImporters: string[] = [];
 	readonly dynamicImports: DynamicImport[] = [];
@@ -213,7 +213,7 @@ export default class Module {
 	readonly importDescriptions = new Map<string, ImportDescription>();
 	readonly importMetas: MetaProperty[] = [];
 	importedFromNotTreeshaken = false;
-	readonly importers: string[] = [];
+	readonly importers: string[] = [];   //被导入的模块信息
 	readonly includedDynamicImporters: Module[] = [];
 	readonly includedImports = new Set<Variable>();
 	readonly info: ModuleInfo;
@@ -240,13 +240,13 @@ export default class Module {
 	private readonly exportAllSources = new Set<string>();
 	private exportNamesByVariable: Map<Variable, string[]> | null = null;
 	private readonly exportShimVariable = new ExportShimVariable(this);
-	private readonly exports = new Map<string, ExportDescription>();
+	private readonly exports = new Map<string, ExportDescription>(); //保存模块的导出变量
 	private declare magicString: MagicString;
 	private readonly namespaceReexportsByName = new Map<
 		string,
 		[variable: Variable | null, indirectExternal?: boolean]
 	>();
-	private readonly reexportDescriptions = new Map<string, ReexportDescription>();
+	private readonly reexportDescriptions = new Map<string, ReexportDescription>();  //保存类似此类变量 export { foo } from './other'
 	private relevantDependencies: Set<Module | ExternalModule> | null = null;
 	private readonly syntheticExports = new Map<string, SyntheticNamedExportVariable>();
 	private syntheticNamespace: Variable | null | undefined = null; //合成命名空间
