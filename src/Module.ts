@@ -366,6 +366,7 @@ export default class Module {
 	}
 
 	bindReferences(): void {
+		//绑定作用域
 		this.ast!.bind();
 	}
 
@@ -835,11 +836,12 @@ export default class Module {
 			searchedNamesAndModules?: Map<string, Set<Module | ExternalModule>>;
 		} = EMPTY_OBJECT
 	): Variable | null {
+		//模块作用域变量
 		const localVariable = this.scope.variables.get(name);
 		if (localVariable) {
 			return localVariable;
 		}
-
+		//import引入的变量
 		const importDeclaration = this.importDescriptions.get(name);
 		if (importDeclaration) {
 			const otherModule = importDeclaration.module;

@@ -247,6 +247,7 @@ export default class Graph {
 		}
 		this.modules = orderedModules;
 		for (const module of this.modules) {
+			//绑定作用域
 			module.bindReferences();
 		}
 		this.warnForMissingExports();

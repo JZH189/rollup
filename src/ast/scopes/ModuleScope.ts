@@ -46,11 +46,14 @@ export default class ModuleScope extends ChildScope {
 	}
 
 	findVariable(name: string): Variable {
+		//从自身模块或者外部找变量
 		const knownVariable = this.variables.get(name) || this.accessedOutsideVariables.get(name);
 		if (knownVariable) {
 			return knownVariable;
 		}
+		//从上下文中找变量，也就是从自身模块的importDescriptions对象中找。
 		const variable = this.context.traceVariable(name) || this.parent.findVariable(name);
+		//如果是外部依赖module中的变量则保存起来方便下次访问
 		if (variable instanceof GlobalVariable) {
 			this.accessedOutsideVariables.set(name, variable);
 		}
