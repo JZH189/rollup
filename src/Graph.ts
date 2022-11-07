@@ -115,7 +115,11 @@ export default class Graph {
 
 		timeStart('sort and bind modules', 2);
 		this.phase = BuildPhase.ANALYSE;
-		//按照引入顺序排序模块
+		/**
+		 * sortModules主要做了两件事情：
+		 * 1、按照引入顺序排序模块
+		 * 2、绑定node.variable。即变量的引用信息
+		 */
 		this.sortModules();
 		timeEnd('sort and bind modules', 2);
 
@@ -247,7 +251,7 @@ export default class Graph {
 		}
 		this.modules = orderedModules;
 		for (const module of this.modules) {
-			//绑定作用域
+			//绑定变量的引用
 			module.bindReferences();
 		}
 		this.warnForMissingExports();

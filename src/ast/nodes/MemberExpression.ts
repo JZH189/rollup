@@ -106,7 +106,7 @@ export default class MemberExpression extends NodeBase implements DeoptimizableE
 
 	bind(): void {
 		this.bound = true;
-		const path = getPathIfNotComputed(this);
+		const path = getPathIfNotComputed(this); //console,log
 		const baseVariable = path && this.scope.findVariable(path[0].key);
 		if (baseVariable && baseVariable.isNamespace) {
 			const resolvedVariable = resolveNamespaceVariables(

@@ -1243,6 +1243,7 @@ export default class Module {
 // if there is a cyclic import in the reexport chain, we should not
 // import from the original module but from the cyclic module to not
 // mess up execution order.
+//如果再导出链中有循环导入，我们不应该从原始模块导入，而应该从循环模块导入，以免弄乱执行顺序。
 function setAlternativeExporterIfCyclic(
 	variable: Variable,
 	importer: Module,
