@@ -4,7 +4,7 @@ const age = 17;
 function foo() {
 	console.log(123);
 	function innerFunc() {
-		// tree shaking
+		// tree-shaking
 		console.log(3);
 	}
 	return 'foo';
