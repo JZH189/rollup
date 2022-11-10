@@ -63,7 +63,7 @@ async function addJsExtensionIfNecessary(
 	file: string,
 	preserveSymlinks: boolean
 ): Promise<string | undefined> {
-	//file => 'c:\Users\Walmart\Desktop\study\rollup-master\rollup\example\user'
+	//file => 'c:\Users\**\Desktop\study\rollup-master\rollup\example\user'
 	return (
 		(await findFile(file, preserveSymlinks)) ??
 		(await findFile(file + '.mjs', preserveSymlinks)) ??

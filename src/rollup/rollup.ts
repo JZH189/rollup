@@ -41,7 +41,7 @@ export async function rollupInternal(
 	rawInputOptions: RollupOptions,
 	watcher: RollupWatcher | null
 ): Promise<RollupBuild> {
-	//格式化inputOptions
+	//合并用户传入的inputOptions
 	const { options: inputOptions, unsetOptions: unsetInputOptions } = await getInputOptions(
 		rawInputOptions,
 		watcher !== null

@@ -97,6 +97,7 @@ export default class Graph {
 		this.acornParser = acorn.Parser.extend(...(options.acornInjectPlugins as any[]));
 		//初始化 moduleLoader
 		this.moduleLoader = new ModuleLoader(this, this.modulesById, this.options, this.pluginDriver);
+		//初始化任务队列
 		this.fileOperationQueue = new Queue(options.maxParallelFileOps);
 	}
 
@@ -185,7 +186,7 @@ export default class Graph {
 
 	private async generateModuleGraph(): Promise<void> {
 		/**
-		 * normalizeEntryModules(this.options.input) => '[{"fileName":null,"id":"c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example/index.js","implicitlyLoadedAfter":[],"name":null}]'
+		 * normalizeEntryModules(this.options.input) => '[{"fileName":null,"id":"example/index.js","implicitlyLoadedAfter":[],"name":null}]'
 		 */
 		({ entryModules: this.entryModules, implicitEntryModules: this.implicitEntryModules } =
 			await this.moduleLoader.addEntryModules(normalizeEntryModules(this.options.input), true));

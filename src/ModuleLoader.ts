@@ -530,7 +530,7 @@ export class ModuleLoader {
 						: resolveIdResult
 			};
 		}
-		//id => c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example\\index.js
+		//id => c:\\Users\\**\\Desktop\\study\\rollup-master\\rollup\\example\\index.js
 		const id = makeAbsoluteExternalsRelative
 			? normalizeRelativeExternalId(source, importer)
 			: source;
@@ -647,7 +647,7 @@ export class ModuleLoader {
 		importer: string | undefined,
 		implicitlyLoadedBefore: string | null
 	): Promise<Module> {
-		//resolveIdResult => 'c:\\Users\\Walmart\\Desktop\\study\\rollup-2.52.6\\example\\index.js'
+		//resolveIdResult => 'c:\\Users\\**\\Desktop\\study\\rollup-master\\rollup\\example\\index.js'
 		const resolveIdResult = await resolveId(
 			unresolvedId,
 			importer,
