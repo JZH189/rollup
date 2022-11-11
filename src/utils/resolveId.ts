@@ -74,6 +74,7 @@ async function addJsExtensionIfNecessary(
 async function findFile(file: string, preserveSymlinks: boolean): Promise<string | undefined> {
 	try {
 		const stats = await fs.lstat(file);
+		//stats.isSymbolicLink() 返回true，证明是软链接地址
 		if (!preserveSymlinks && stats.isSymbolicLink())
 			return await findFile(await fs.realpath(file), preserveSymlinks);
 		if ((preserveSymlinks && stats.isSymbolicLink()) || stats.isFile()) {

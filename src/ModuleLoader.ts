@@ -144,7 +144,7 @@ export class ModuleLoader {
 						);
 					}
 				}
-				//排序入口模板
+				//按照module.index的值作升序排序
 				this.indexedEntryModules.sort(({ index: indexA }, { index: indexB }) =>
 					indexA > indexB ? 1 : -1
 				);
@@ -393,6 +393,8 @@ export class ModuleLoader {
 			meta,
 			assertions
 		);
+		//根据模块id保存所有的 module 信息。
+		//因为 new Graph 的时候保存了 ModuleLoader 的引用。那么将来 graph 就能通过 this.moduleLoader.modulesById 获取到所有的模块信息了
 		this.modulesById.set(id, module);
 		this.graph.watchFiles[id] = true;
 		const loadPromise: LoadModulePromise = this.addModuleSource(id, importer, module).then(() => [
