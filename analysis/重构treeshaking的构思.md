@@ -1,4 +1,4 @@
-## Algorithmic/architecture changes
+## [Algorithmic/architecture changes](https://github.com/rollup/rollup/pull/1582)
 
 算法/架构更改
 
@@ -28,8 +28,7 @@
 
 ## Module
 
-Module.includeInBundle() includes each node that .shouldBeIncluded(), see below
-Module.includeInBundle() 方法包含了所有应该被包含的 node，见下文
+Module.includeInBundle() includes each node that .shouldBeIncluded(), see below Module.includeInBundle() 方法包含了所有应该被包含的 node，见下文
 
 ## Node
 
@@ -70,10 +69,9 @@ There are other new methods:
 - An assignment has an effect when assigning to a global variable or (possibly) a member expression but NOT to a function parameter.
 - During bind, .assignExpression() assigns new nodes to declarations that can be checked for mutations etc.
 
-And more that I can no longer remember :)
-I hope you like it, feedback always welcome.
+And more that I can no longer remember :) I hope you like it, feedback always welcome.
 
-## 赋值和突变
+## Assignments and Mutations
 
 - declaration.possibleValues 值已重命名为 .assignedExpressions，现在只接收实际节点或新 UNKNOWN_ASSIGNMENT 节点。以前，许多不同的伪值已经在这里“用于调试目的”，这使得生产代码更加困难。
 - 节点现在可以有两种新的副作用：.hasEffectsWhenAssigned() 和 .hasEffectsWhenMutated()
@@ -82,5 +80,4 @@ I hope you like it, feedback always welcome.
 - 赋值在赋值给全局变量或（可能）成员表达式但未赋值函数参数时有效。
 - 在绑定期间，.assignExpression（） 将新节点分配给可以检查突变等的声明。
 
-还有其他的我也记不起来:)
-我希望你喜欢它，随时欢迎反馈。
+还有其他的我也记不起来:) 我希望你喜欢它，随时欢迎反馈。

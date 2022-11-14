@@ -148,18 +148,24 @@ export class NodeBase extends ExpressionEntity implements ExpressionNode {
 		parent: Node | { context: AstContext; type: string },
 		parentScope: ChildScope
 	) {
+		//调用ExpressionEntity初始化included = false
 		super();
+		//保留原来的node节点
 		this.esTreeNode = esTreeNode;
+		//复制并扩展节点
 		this.keys = keys[esTreeNode.type] || getAndCreateKeys(esTreeNode);
 		this.parent = parent;
+		//这个context就是module.astContext,保留上下文是为了方便后续node调用module上的方法
 		this.context = parent.context;
+		//创建局部作用域
 		this.createScope(parentScope);
 		/**
 		 * 这一步很重要：
-		 * 重写Program结构，基于esTreeNode扩展node节点（实例化ast.nodes，并且继承node的方法和属性。例如将node.incluede设置为false等等）
+		 * 深度遍历 esTree 重写 Program 结构，基于 esTreeNode 扩展 rollup 自己的 node 节点
 		*/
 		this.parseNode(esTreeNode);
 		this.initialise();
+		//添加sourceMap
 		this.context.magicString.addSourcemapLocation(this.start);
 		this.context.magicString.addSourcemapLocation(this.end);
 	}
@@ -259,8 +265,10 @@ export class NodeBase extends ExpressionEntity implements ExpressionNode {
 			// That way, we can override this function to add custom initialisation and then call super.parseNode
 			if (this.hasOwnProperty(key)) continue;
 			if (key.charCodeAt(0) === 95 /* _ */) {
+				//ANNOTATION_KEY = '_rollupAnnotations'
 				if (key === ANNOTATION_KEY) {
 					this.annotations = value;
+					//INVALID_COMMENT_KEY = '_rollupRemoved'
 				} else if (key === INVALID_COMMENT_KEY) {
 					for (const { start, end } of value as acorn.Comment[])
 						this.context.magicString.remove(start, end);
@@ -268,11 +276,10 @@ export class NodeBase extends ExpressionEntity implements ExpressionNode {
 			} else if (typeof value !== 'object' || value === null) {
 				(this as GenericEsTreeNode)[key] = value;
 			} else if (Array.isArray(value)) {
-				//esTreeNode.body
 				(this as GenericEsTreeNode)[key] = [];
 				for (const child of value) {
 					/** 
-					 * 遍历 esTreeNode.body 节点并且根据 node.type 实例化对应的节点Class。
+					 * 遍历 esTreeNode.body 节点并且根据 node.type 创建对应的节点。
 					 * 举个例子，如下语句的node.type = "ImportDeclaration"
 					 * import { age, foo, name } from './user';
 					 * 那么就会执行 new ImportDeclaration(child, this, this.scope) 语句初始化node
