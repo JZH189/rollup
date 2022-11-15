@@ -544,7 +544,7 @@ export class ModuleLoader {
 			id
 		};
 	}
-
+	//设置动态导入的模块id
 	private getResolveDynamicImportPromises(module: Module): ResolveDynamicDependencyPromise[] {
 		return module.dynamicImports.map(async dynamicImport => {
 			const resolvedId = await this.resolveDynamicImport(
@@ -556,12 +556,21 @@ export class ModuleLoader {
 				getAssertionsFromImportExpression(dynamicImport.node)
 			);
 			if (resolvedId && typeof resolvedId === 'object') {
+				/**
+				 * dynamicImport :
+				 * {
+						argument: './user', 
+						id: 'c:\Users\**\Desktop\study\rollup-master\rollup\example\user.js', 
+						node: ImportExpression, 
+						resolution: null
+					}
+				 */
 				dynamicImport.id = resolvedId.id;
 			}
 			return [dynamicImport, resolvedId] as const;
 		});
 	}
-
+	// 设置module.resolvedIds
 	private getResolveStaticDependencyPromises(module: Module): ResolveStaticDependencyPromise[] {
 		// eslint-disable-next-line unicorn/prefer-spread
 		return Array.from(
