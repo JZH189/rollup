@@ -33,11 +33,11 @@ export default class CallExpression extends CallExpressionBase implements Deopti
 		super.bind();
 		if (this.callee instanceof Identifier) {
 			const variable = this.scope.findVariable(this.callee.name);
-
+			//*
 			if (variable.isNamespace) {
 				this.context.warn(errorCannotCallNamespace(this.callee.name), this.start);
 			}
-
+			//如果是eval()函数调用会警告
 			if (this.callee.name === 'eval') {
 				this.context.warn(errorEval(this.context.module.id), this.start);
 			}
