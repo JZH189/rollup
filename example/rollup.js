@@ -5,8 +5,8 @@ const inputOption = {
 };
 //打包输出配置信息就简单点，分别定义输出的js文件格式还有文件名称
 const outputOption = {
-	format: 'es',
-	file: 'example/es.js'
+	file: 'example/es.js',
+	format: 'es'
 };
 
 async function build() {
@@ -14,7 +14,7 @@ async function build() {
 		const { write } = await rollup(inputOption);
 		await write(outputOption);
 	} catch (error) {
-		console.log('error: ', error);
+		console.log('error:', error);
 	}
 }
 //开始打包

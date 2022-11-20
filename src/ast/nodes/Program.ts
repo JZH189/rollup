@@ -12,7 +12,7 @@ export default class Program extends NodeBase {
 	private hasCachedEffect = false;
 
 	hasEffects(context: HasEffectsContext): boolean {
-		// 设置 hasCachedEffect 提升效率
+		// 设置 hasCachedEffect 缓存
 		if (this.hasCachedEffect) return true;
 		for (const node of this.body) {
 			if (node.hasEffects(context)) {

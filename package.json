@@ -140,5 +140,8 @@
     },
     "./loadConfigFile": "./dist/loadConfigFile.js",
     "./dist/*": "./dist/*"
+  },
+  "dependencies": {
+    "fsevents": "~2.3.2"
   }
 }

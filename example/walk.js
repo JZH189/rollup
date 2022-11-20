@@ -1,20 +1,19 @@
 const acorn = require('acorn');
-const { json } = require('stream/consumers');
 function visit(node, parent, enter, leave) {
 	if (enter) {
 		enter.call(null, node, parent);
 	}
 	const keys = Object.keys(node).filter(key => typeof node[key] === 'object');
-	keys.forEach(key => {
+	for (const key of keys) {
 		const value = node[key];
 		if (Array.isArray(value)) {
-			value.forEach(val => {
-				visit(val, node, enter, leave);
-			});
+			for (const value_ of value) {
+				visit(value_, node, enter, leave);
+			}
 		} else if (value && value.type) {
 			visit(value, node, enter, leave);
 		}
-	});
+	}
 	if (leave) {
 		leave.call(null, node, parent);
 	}

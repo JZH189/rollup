@@ -49,8 +49,8 @@ function normalizeEntryModules(
 }
 
 export default class Graph {
-	readonly acornParser: typeof acorn.Parser;//使用acornParser解析ast
-	readonly cachedModules = new Map<string, ModuleJSON>();//缓存的modules,提升性能
+	readonly acornParser: typeof acorn.Parser; //使用acornParser解析ast
+	readonly cachedModules = new Map<string, ModuleJSON>(); //缓存的modules,提升性能
 	readonly deoptimizationTracker = new PathTracker();
 	entryModules: Module[] = []; //入口模块
 	readonly fileOperationQueue: Queue;
@@ -63,8 +63,8 @@ export default class Graph {
 	readonly watchFiles: Record<string, true> = Object.create(null);
 	watchMode = false;
 
-	private readonly externalModules: ExternalModule[] = [];//外部的modules
-	private implicitEntryModules: Module[] = [];//隐式入口模块
+	private readonly externalModules: ExternalModule[] = []; //外部的modules
+	private implicitEntryModules: Module[] = []; //隐式入口模块
 	private modules: Module[] = []; //保存的模块
 	private declare pluginCache?: Record<string, SerializablePluginCache>;
 
@@ -204,6 +204,7 @@ export default class Graph {
 
 	private includeStatements(): void {
 		for (const module of [...this.entryModules, ...this.implicitEntryModules]) {
+			//标记模块 isExecuted = true;
 			markModuleAndImpureDependenciesAsExecuted(module);
 		}
 		if (this.options.treeshake) {
