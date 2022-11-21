@@ -202,7 +202,7 @@ export default class Identifier extends NodeBase implements PatternNode {
 	}
 
 	isPossibleTDZ(): boolean {
-		//在代码块内，使用let/const命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
+		//在代码块内，使用calss、let、const、var声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
 		// return cached value to avoid issues with the next tree-shaking pass
 		if (this.isTDZAccess !== null) return this.isTDZAccess;
 
@@ -224,6 +224,7 @@ export default class Identifier extends NodeBase implements PatternNode {
 		) {
 			// a variable accessed before its declaration
 			// in the same function or at top level of module
+			//在同一函数中或模块的顶层声明之前访问的变量, 即在变量声明之前使用。
 			return (this.isTDZAccess = true);
 		}
 
