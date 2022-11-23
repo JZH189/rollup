@@ -223,7 +223,6 @@ export default class MemberExpression extends NodeBase implements DeoptimizableE
 
 	hasEffects(context: HasEffectsContext): boolean {
 		if (!this.deoptimized) this.applyDeoptimizations();
-		//console.log调用一般视为no-effects
 		return (
 			this.property.hasEffects(context) ||
 			this.object.hasEffects(context) ||
