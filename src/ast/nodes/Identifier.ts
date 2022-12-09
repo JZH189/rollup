@@ -58,7 +58,7 @@ export default class Identifier extends NodeBase implements PatternNode {
 	}
 
 	bind(): void {
-		//如果当前作用域中没有找到变量定义，并且是一个引入（例如：node.type = Identifier 而且 node.parent.type=CallExpression）
+		//如果当前作用域中没有找到变量定义，并且是一个引用（例如：node.type = Identifier 而且 node.parent.type=CallExpression）
 		if (!this.variable && isReference(this, this.parent as NodeWithFieldDefinition)) {
 			this.variable = this.scope.findVariable(this.name);
 			this.variable.addReference(this);

@@ -6,7 +6,10 @@ const inputOption = {
 //打包输出配置信息就简单点，分别定义输出的js文件格式还有文件名称
 const outputOption = {
 	file: 'example/es.js',
-	format: 'es'
+	format: 'es',
+	manualChunks: {
+		isReference: ['is-reference']
+	}
 };
 
 async function build() {
