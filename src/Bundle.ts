@@ -44,6 +44,7 @@ export default class Bundle {
 	async generate(isWrite: boolean): Promise<OutputBundle> {
 		timeStart('GENERATE', 1);
 		const outputBundleBase: OutputBundle = Object.create(null);
+		// outputBundle 是一个 proxy 
 		const outputBundle = getOutputBundle(outputBundleBase);
 		this.pluginDriver.setOutputBundle(outputBundle, this.outputOptions);
 
@@ -159,7 +160,14 @@ export default class Bundle {
 		bundle: OutputBundleWithPlaceholders,
 		getHashPlaceholder: HashPlaceholderGenerator
 	): Promise<Chunk[]> {
+		/**
+		 * inlineDynamicImports: 该选项用于内联动态引入，而不是用于创建包含新 Chunk 的独立 bundle。它只在单一输入源时产生作用。
+		 * manualChunks: 该选项允许你创建自定义的公共模块。
+		 * preserveModules: 该选项将使用原始模块名作为文件名，为所有模块创建单独的 chunk，而不是创建尽可能少的 chunk。
+		 * 
+		 */
 		const { inlineDynamicImports, manualChunks, preserveModules } = this.outputOptions;
+		// outputOption.manualChunks 既可以是对象，也可以是函数
 		const manualChunkAliasByEntry =
 			typeof manualChunks === 'object'
 				? await this.addManualChunks(manualChunks)
