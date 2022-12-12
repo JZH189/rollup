@@ -44,7 +44,7 @@ export default class Bundle {
 	async generate(isWrite: boolean): Promise<OutputBundle> {
 		timeStart('GENERATE', 1);
 		const outputBundleBase: OutputBundle = Object.create(null);
-		// outputBundle 是一个 proxy 
+		// outputBundle 是一个 proxy
 		const outputBundle = getOutputBundle(outputBundleBase);
 		this.pluginDriver.setOutputBundle(outputBundle, this.outputOptions);
 
@@ -99,6 +99,16 @@ export default class Bundle {
 		manualChunks: Record<string, readonly string[]>
 	): Promise<Map<Module, string>> {
 		const manualChunkAliasByEntry = new Map<Module, string>();
+		/**
+		 * alias 就是我们定义manualChunks 的 key，例如 acorn
+		 * await this.graph.moduleLoader.addAdditionalModules(files) 会得到一个 module[]
+		 * chunkEntries
+		    [{…}]
+				0: {alias: 'acorn', entries: Array(1)}
+				length: 1
+				[[Prototype]]: Array(0)
+				[[Prototype]]: Object
+		 */
 		const chunkEntries = await Promise.all(
 			Object.entries(manualChunks).map(async ([alias, files]) => ({
 				alias,
@@ -107,6 +117,7 @@ export default class Bundle {
 		);
 		for (const { alias, entries } of chunkEntries) {
 			for (const entry of entries) {
+				//内部调用 manualChunkAliasByEntry.set(module, alias)
 				addModuleToManualChunk(alias, entry, manualChunkAliasByEntry);
 			}
 		}
@@ -164,10 +175,14 @@ export default class Bundle {
 		 * inlineDynamicImports: 该选项用于内联动态引入，而不是用于创建包含新 Chunk 的独立 bundle。它只在单一输入源时产生作用。
 		 * manualChunks: 该选项允许你创建自定义的公共模块。
 		 * preserveModules: 该选项将使用原始模块名作为文件名，为所有模块创建单独的 chunk，而不是创建尽可能少的 chunk。
-		 * 
+		 *
 		 */
 		const { inlineDynamicImports, manualChunks, preserveModules } = this.outputOptions;
 		// outputOption.manualChunks 既可以是对象，也可以是函数
+		/**
+		 * this.addManualChunks(manualChunks) 或者 this.assignManualChunks(manualChunks) 都会返回一个 Map<Module, string> 结构的对象。
+		 * manualChunkAliasByEntry => [Module, 'acorn']
+		 */
 		const manualChunkAliasByEntry =
 			typeof manualChunks === 'object'
 				? await this.addManualChunks(manualChunks)
