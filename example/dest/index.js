@@ -1,9 +1,13 @@
+import { a as acorn } from './acorn-bf6b1c54.js';
+
 const name = 'victor jiang';
 
 function foo() {
 	console.log(123);
 	return 'foo';
 }
+
+console.log('acorn: ', acorn);
 
 const fname = foo();
 {
