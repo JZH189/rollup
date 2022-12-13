@@ -189,6 +189,11 @@ export default class Bundle {
 				: this.assignManualChunks(manualChunks);
 		const snippets = getGenerateCodeSnippets(this.outputOptions);
 		const includedModules = getIncludedModules(this.graph.modulesById);
+		/**
+		 * getAbsoluteEntryModulePaths(includedModules, false) 返回入口模块并且为绝对路径的一个字符串（(module.info.isEntry || preserveModules) && isAbsolute(module.id)）
+		 * commondir 会返回路径中代表文件夹的部分
+		 * inputBase 就是根路径的意思
+		 */
 		const inputBase = commondir(getAbsoluteEntryModulePaths(includedModules, preserveModules));
 		const externalChunkByModule = getExternalChunkByModule(
 			this.graph.modulesById,

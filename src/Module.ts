@@ -420,6 +420,7 @@ export default class Module {
 			}
 		}
 		for (let variable of dependencyVariables) {
+			//获取变量对应的 modules
 			const sideEffectDependencies = this.sideEffectDependenciesByVariable.get(variable);
 			if (sideEffectDependencies) {
 				for (const module of sideEffectDependencies) {
@@ -438,6 +439,7 @@ export default class Module {
 				this.relevantDependencies.add(dependency);
 			}
 		} else {
+			//找出入口模块的依赖模块得到 this.relevantDependencies
 			this.addRelevantSideEffectDependencies(
 				this.relevantDependencies,
 				necessaryDependencies,
@@ -1051,7 +1053,12 @@ export default class Module {
 			specifier.module = this.graph.modulesById.get(id)!;
 		}
 	}
-
+	/**
+	 * 通过 necessaryDependencies 找出基于当前 module 的依赖模块，例如 index 模块的依赖模块分别是 user 和 acorn 模块。
+	 * @param relevantDependencies 
+	 * @param necessaryDependencies 
+	 * @param alwaysCheckedDependencies 
+	 */
 	private addRelevantSideEffectDependencies(
 		relevantDependencies: Set<Module | ExternalModule>,
 		necessaryDependencies: ReadonlySet<Module | ExternalModule>,

@@ -12,6 +12,10 @@ export function getChunkAssignments(
 	const chunkDefinitions: ChunkDefinitions = [];
 	const modulesInManualChunks = new Set(manualChunkAliasByEntry.keys());
 	const manualChunkModulesByAlias: Record<string, Module[]> = Object.create(null);
+	/**
+	 *下面的for循环逻辑中主要作用是将 manualChunkAliasByEntry 的结构（{size: 1, Module {graph, …} => acorn}）
+	 * 进行 key-value 的反转然后添加到 manualChunkModulesByAlias 对象中
+	 */
 	for (const [entry, alias] of manualChunkAliasByEntry) {
 		const chunkModules = (manualChunkModulesByAlias[alias] =
 			manualChunkModulesByAlias[alias] || []);
@@ -120,11 +124,13 @@ function analyzeModuleGraph(entryModules: readonly Module[]): {
 		const modulesToHandle = new Set([currentEntry]);
 		for (const module of modulesToHandle) {
 			getOrCreate(dependentEntryPointsByModule, module, () => new Set()).add(currentEntry);
+			//module.getDependenciesToBeIncluded() 会得到所有相关依赖模块（包含当前模块自身）例如：[user, acorn, index]
 			for (const dependency of module.getDependenciesToBeIncluded()) {
 				if (!(dependency instanceof ExternalModule)) {
 					modulesToHandle.add(dependency);
 				}
 			}
+			// 模块的动态import（import('module'))
 			for (const { resolution } of module.dynamicImports) {
 				if (resolution instanceof Module && resolution.includedDynamicImporters.length > 0) {
 					dynamicEntryModules.add(resolution);
