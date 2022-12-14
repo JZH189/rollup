@@ -13,7 +13,7 @@ export function getChunkAssignments(
 	const modulesInManualChunks = new Set(manualChunkAliasByEntry.keys());
 	const manualChunkModulesByAlias: Record<string, Module[]> = Object.create(null);
 	/**
-	 *下面的for循环逻辑中主要作用是将 manualChunkAliasByEntry 的结构（{size: 1, Module {graph, …} => acorn}）
+	 *下面的for循环逻辑中主要作用是将 manualChunkAliasByEntry 的结构（{ Module {graph, …} => acorn}）
 	 * 进行 key-value 的反转然后添加到 manualChunkModulesByAlias 对象中
 	 */
 	for (const [entry, alias] of manualChunkAliasByEntry) {
@@ -27,6 +27,11 @@ export function getChunkAssignments(
 
 	const assignedEntryPointsByModule: DependentModuleMap = new Map();
 	const { dependentEntryPointsByModule, dynamicEntryModules } = analyzeModuleGraph(entryModules);
+	/**
+	 * getDynamicDependentEntryPoints 的作用是获取动态 import 所对应的 importer
+	 * 在这个例子中就是为了获取 user 模块对应的 importer （index模块）
+	 * {size: 1, Module {graph, …} => Set(1) {…}}
+	 */
 	const dynamicallyDependentEntryPointsByDynamicEntry: DependentModuleMap =
 		getDynamicDependentEntryPoints(dependentEntryPointsByModule, dynamicEntryModules);
 	const staticEntries = new Set(entryModules);
