@@ -60,6 +60,7 @@ export default class Bundle {
 			// chunks => [chunk]
 			const chunks = await this.generateChunks(outputBundle, getHashPlaceholder);
 			if (chunks.length > 1) {
+				//校验 outputOptions 选项是否合法
 				validateOptionsForMultiChunkOutput(this.outputOptions, this.inputOptions.onwarn);
 			}
 			this.pluginDriver.setChunkInformation(this.facadeChunkByModule);
@@ -68,7 +69,11 @@ export default class Bundle {
 			}
 
 			timeEnd('generate chunks', 2);
-
+			/**
+			 * outputBundle主要作用是生成最终的outputBundle。
+			 * 例如：{index.js: {…}, acorn-bf6b1c54.js: {…}}
+			 * 
+			 */
 			await renderChunks(
 				chunks,
 				outputBundle,

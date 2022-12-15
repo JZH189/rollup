@@ -15,6 +15,7 @@ export function getStaticDependencies(
 		const module = orderedModules[modulePos];
 		if (!handledDependencies.has(module)) {
 			const staticDependencies: (Chunk | ExternalChunk)[] = [];
+			//递归查找 module 的 ExternalModule 并添加到 staticDependencies 中
 			addStaticDependencies(
 				module,
 				staticDependencies,

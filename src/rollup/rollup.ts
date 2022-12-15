@@ -158,6 +158,9 @@ async function handleGenerateWrite(
 	);
 	return catchUnfinishedHookActions(outputPluginDriver, async () => {
 		const bundle = new Bundle(outputOptions, unsetOptions, inputOptions, outputPluginDriver, graph);
+		/**
+		 * bundle.generate(isWrite)会得到一个 outputBundleBase 对象。（类似 {index.js: {…}, acorn-bf6b1c54.js: {…}}）
+		 */
 		const generated = await bundle.generate(isWrite);
 		if (isWrite) {
 			timeStart('WRITE', 1);
@@ -172,6 +175,7 @@ async function handleGenerateWrite(
 			await outputPluginDriver.hookParallel('writeBundle', [outputOptions, generated]);
 			timeEnd('WRITE', 1);
 		}
+		//createOutput(generated) 会得到一个 output[...chunks]
 		return createOutput(generated);
 	});
 }

@@ -335,6 +335,7 @@ export default class Chunk {
 			}
 		}
 		if (this.outputOptions.minifyInternalExports) {
+			//压缩变量名称
 			assignExportsToMangledNames(remainingExports, this.exportsByName, this.exportNamesByVariable);
 		} else {
 			assignExportsToNames(remainingExports, this.exportsByName, this.exportNamesByVariable);
@@ -392,6 +393,7 @@ export default class Chunk {
 				) {
 					this.facadeModule = module;
 					this.facadeChunkByModule.set(module, this);
+					//module.preserveSignature = 'exports-only'
 					if (module.preserveSignature) {
 						this.strictFacade = needsStrictFacade;
 					}
