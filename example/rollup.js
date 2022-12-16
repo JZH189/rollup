@@ -119,9 +119,9 @@ loadConfigFile(path.resolve(__dirname, 'rollup.config.js'), { format: 'es' }).th
 				]
 			}
 			 */
-			const bundle = await rollup(optionsObj);
-			//bundle.write 函数会被自动传入三个参数：数组元素，元素索引，原数组本身。
-			await Promise.all(optionsObj.output.map(bundle.write));
+			const { write } = await rollup(optionsObj);
+			//write 函数会被自动传入三个参数：数组元素，元素索引，原数组本身。
+			await Promise.all(optionsObj.output.map(write));
 		}
 	}
 );
