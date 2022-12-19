@@ -1346,6 +1346,7 @@ export default class Chunk {
 				variable = variable.getBaseVariable();
 			}
 			const chunk = this.chunkByModule.get(variable.module as Module);
+			//设置 chunk 的 imports 和 exports
 			if (chunk !== this) {
 				this.imports.add(variable);
 				if (

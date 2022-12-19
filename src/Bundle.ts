@@ -207,7 +207,10 @@ export default class Bundle {
 		);
 		const chunks: Chunk[] = [];
 		const chunkByModule = new Map<Module, Chunk>();
-		// preserveModules = false
+		/**
+		 * 如果没有在配置文件中手动设置 preserveModules 和 inlineDynamicImports 则他们都默认为 false 。
+		 * 因此执行的是 getChunkAssignments(this.graph.entryModules, manualChunkAliasByEntry) 
+		 */
 		for (const { alias, modules } of inlineDynamicImports
 			? [{ alias: null, modules: includedModules }]
 			: preserveModules

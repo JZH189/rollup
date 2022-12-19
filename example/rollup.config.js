@@ -3,9 +3,9 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
 module.exports = {
 	input: 'example/index.js',
-	// external: ["acorn"],
+	// external: ['acorn'],
 	output: {
-		// file: "dest/bundle.js",
+		// file: 'dest/bundle.js',
 		dir: 'example/dest',
 		format: 'es',
 		manualChunks: {
