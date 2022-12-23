@@ -57,13 +57,20 @@ export default class Bundle {
 			timeStart('generate chunks', 2);
 
 			const getHashPlaceholder = getHashPlaceholderGenerator();
-			// chunks => [chunk]
+			// chunks => [chunk, ...]
 			const chunks = await this.generateChunks(outputBundle, getHashPlaceholder);
 			if (chunks.length > 1) {
 				//校验 outputOptions 选项是否合法
 				validateOptionsForMultiChunkOutput(this.outputOptions, this.inputOptions.onwarn);
 			}
 			this.pluginDriver.setChunkInformation(this.facadeChunkByModule);
+			/**
+			 * chunk.generateExports 主要做了以下几件事：
+			 * 1. 设置 chunk.exportNamesByVariable
+			 * 2. 设置 chunk.exportsByName
+			 * 3. 压缩变量名称（默认情况下）
+			 * 4. 设置 chunk.exportMode
+			 */
 			for (const chunk of chunks) {
 				chunk.generateExports();
 			}
@@ -72,7 +79,11 @@ export default class Bundle {
 			/**
 			 * renderChunks 主要作用是生成最终的 outputBundle。
 			 * 例如：{index.js: {…}, acorn-bf6b1c54.js: {…}}
-			 *
+			 * 主要可以分为以下几步：
+			 * 1. 设置入口 chunk 的 preliminaryFileName
+			 * 2. 执行chunk.render()
+			 * 3. 生成 chunkGraph
+			 * 4. addChunksToBundle
 			 */
 			await renderChunks(
 				chunks,
@@ -209,7 +220,7 @@ export default class Bundle {
 		const chunkByModule = new Map<Module, Chunk>();
 		/**
 		 * 如果没有在配置文件中手动设置 preserveModules 和 inlineDynamicImports 则他们都默认为 false 。
-		 * 因此执行的是 getChunkAssignments(this.graph.entryModules, manualChunkAliasByEntry) 
+		 * 因此执行的是 getChunkAssignments(this.graph.entryModules, manualChunkAliasByEntry)
 		 */
 		for (const { alias, modules } of inlineDynamicImports
 			? [{ alias: null, modules: includedModules }]

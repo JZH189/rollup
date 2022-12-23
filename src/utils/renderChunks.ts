@@ -44,13 +44,14 @@ export async function renderChunks(
 	onwarn: WarningHandler
 ) {
 	timeStart('render chunks', 2);
-
+	//设置入口 chunk 的 preliminaryFileName
 	reserveEntryChunksInBundle(chunks);
+	//chunk.render()
 	const renderedChunks = await Promise.all(chunks.map(chunk => chunk.render()));
 
 	timeEnd('render chunks', 2);
 	timeStart('transform chunks', 2);
-
+	//生成 chunkGraph
 	const chunkGraph = getChunkGraph(chunks);
 	const {
 		nonHashedChunksWithPlaceholders,

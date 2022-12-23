@@ -355,6 +355,7 @@ export default class Chunk {
 		const exposedVariables = new Set<Variable>(
 			this.dynamicEntryModules.map(({ namespace }) => namespace)
 		);
+		//收集需要导出的变量
 		for (const module of entryModules) {
 			if (module.preserveSignature) {
 				for (const exportedVariable of module.getExportNamesByVariable().keys()) {
@@ -397,6 +398,7 @@ export default class Chunk {
 					if (module.preserveSignature) {
 						this.strictFacade = needsStrictFacade;
 					}
+					//设置this.fileName 或者 this.name
 					this.assignFacadeName(
 						requiredFacades.shift()!,
 						module,
@@ -591,6 +593,7 @@ export default class Chunk {
 
 		// for static and dynamic entry points, add transitive dependencies to this
 		// chunk's dependencies to avoid loading latency
+		// 设置入口chunk 的 dependencies (设置this.dependencies)
 		if (hoistTransitiveImports && !preserveModules && facadeModule !== null) {
 			for (const dep of dependencies) {
 				if (dep instanceof Chunk) this.inlineChunkDependencies(dep);
@@ -1120,8 +1123,11 @@ export default class Chunk {
 			preserveModules
 		} = outputOptions;
 		const { _, cnst, n } = snippets;
+		//更新 ImportExpression 的属性。例如inlineNamespace，resolution，assertions 等等
 		this.setDynamicImportResolutions(fileName);
+		//设置 importMeta 属性和 accessedGlobalsByScope
 		this.setImportMetaResolutions(fileName);
+		//重新设置变量名
 		this.setIdentifierRenderResolutions();
 
 		const magicString = new MagicStringBundle({ separator: `${n}${n}` });
@@ -1198,10 +1204,14 @@ export default class Chunk {
 
 	private setDynamicImportResolutions(fileName: string) {
 		const { accessedGlobalsByScope, outputOptions, pluginDriver, snippets } = this;
+		/**
+		 * this.getIncludedDynamicImports() 用于获取包含了 module.dynamicImports 的 chunks：[{chunk: Chunk, externalChunk: null, facadeChunk: undefined, node: ImportExpression, resolution: Module}]
+		 */
 		for (const resolvedDynamicImport of this.getIncludedDynamicImports()) {
 			if (resolvedDynamicImport.chunk) {
 				const { chunk, facadeChunk, node, resolution } = resolvedDynamicImport;
 				if (chunk === this) {
+					//node.inlineNamespace = resolution.namespace;
 					node.setInternalResolution(resolution.namespace);
 				} else {
 					node.setExternalResolution(
@@ -1320,9 +1330,11 @@ export default class Chunk {
 		} = this;
 		for (const module of orderedModules) {
 			for (const importMeta of module.importMetas) {
+				//处理元数据
 				importMeta.setResolution(format, accessedGlobalsByScope, fileName);
 			}
 			if (includedNamespaces.has(module) && !preserveModules) {
+				// accessedGlobalsByScope.set(ChildScope, accessedGlobals);
 				module.namespace.prepare(accessedGlobalsByScope);
 			}
 		}
