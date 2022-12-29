@@ -11,7 +11,7 @@ export default function es(
 	{ externalLiveBindings, freeze, namespaceToStringTag }: NormalizedOutputOptions
 ): void {
 	const { n } = snippets;
-
+	//import 语句组成的数组：例如 ["'import { a as acorn } from './acorn-!~{001}~.js':"]
 	const importBlock = getImportBlock(dependencies, snippets);
 	if (importBlock.length > 0) intro += importBlock.join(n) + n + n;
 	intro += getHelpersBlock(
@@ -23,10 +23,11 @@ export default function es(
 		freeze,
 		namespaceToStringTag
 	);
-	if (intro) magicString.prepend(intro);
-
+	if (intro) magicString.prepend(intro); //将 intro 的内容加在 magicString 前面。
+	// export 语句组成的数组：例如：['export { hello as default };']
 	const exportBlock = getExportBlock(exports, snippets);
 	if (exportBlock.length > 0) magicString.append(n + n + exportBlock.join(n).trim());
+	// 如果有尾部注释则添加尾部的注释
 	if (outro) magicString.append(outro);
 
 	magicString.trim();

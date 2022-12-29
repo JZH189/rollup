@@ -443,6 +443,7 @@ export default class Chunk {
 			) {
 				this.strictFacade = true;
 			} else if (!this.facadeChunkByModule.get(module)?.strictFacade) {
+				// 这个resolution就是指module，例如我们打包案例中的index这个bundle中就有 acorn、user 这两个 resolution
 				this.includedNamespaces.add(module);
 				this.exports.add(module.namespace);
 			}
@@ -567,6 +568,11 @@ export default class Chunk {
 	}
 
 	link(): void {
+		/**
+		 * 设置 chun 的 dependencies。
+		 * 举例子，最终生成 bundle 的时候,如果 bundle 引入了第三方的js库（acorn）（a'c'o'r'n），
+		 * 则需要在文件的顶部插入 import { a as acorn } from './acorn-bf6b1c54.js';
+		 */
 		this.dependencies = getStaticDependencies(
 			this,
 			this.orderedModules,
@@ -599,15 +605,18 @@ export default class Chunk {
 				if (dep instanceof Chunk) this.inlineChunkDependencies(dep);
 			}
 		}
-
+		// preliminaryFileName => { fileName: 'index.js', hashPlaceholder: null }
 		const preliminaryFileName = this.getPreliminaryFileName();
+		//生成 magicStringBundle
 		const { accessedGlobals, indent, magicString, renderedSource, usedModules, usesTopLevelAwait } =
 			this.renderModules(preliminaryFileName.fileName);
-
+		//当前 render 的 dependencies,即 imported 信息
 		const renderedDependencies = [...this.getRenderedDependencies().values()];
+		//当前 render 的 exports,即 exported 信息
 		const renderedExports = exportMode === 'none' ? [] : this.getChunkExportDeclarations(format);
 		let hasExports = renderedExports.length > 0;
 		let hasDefaultExport = false;
+		//判断是否有默认导出
 		for (const { reexports } of renderedDependencies) {
 			if (reexports?.length) {
 				hasExports = true;
@@ -631,6 +640,12 @@ export default class Chunk {
 			pluginDriver,
 			this.getRenderedChunkInfo()
 		);
+		/**
+		 * finalisers[format] 其实执行的是最终的打包 format 的function。
+		 * 它的目的是为了对 renderedSource 做进一步的处理。
+		 * 例如当 format === 'es' 的时候且 bundle 引入了外部的依赖，则需要执行 magicString.prepend()方法在 bundle 头部加上 import 语句。
+		 * 如果有导出变量则需要执行 magicString.append() 方法将导出语句加在 bundle 的尾部。
+		 */
 		finalisers[format](
 			renderedSource,
 			{
@@ -1088,7 +1103,11 @@ export default class Chunk {
 
 		return (this.renderedDependencies = renderedDependencies);
 	}
-
+	/**
+	 * inlineChunkDependencies 主要是将所有的外部依赖都收集起来
+	 * 举例子，最终生成 bundle 的时候,如果 bundle 引入了第三方的js库（acorn），
+	 * 则需要在文件的顶部插入 import { a as acorn } from './acorn-bf6b1c54.js';
+	 */
 	private inlineChunkDependencies(chunk: Chunk): void {
 		for (const dep of chunk.dependencies) {
 			if (this.dependencies.has(dep)) continue;
@@ -1127,7 +1146,7 @@ export default class Chunk {
 		this.setDynamicImportResolutions(fileName);
 		//设置 importMeta 属性和 accessedGlobalsByScope
 		this.setImportMetaResolutions(fileName);
-		//重新设置变量名
+		//防止变量命名冲突
 		this.setIdentifierRenderResolutions();
 
 		const magicString = new MagicStringBundle({ separator: `${n}${n}` });
@@ -1384,6 +1403,7 @@ export default class Chunk {
 				this.chunkByModule.get(resolution) === this &&
 				!this.includedNamespaces.has(resolution)
 			) {
+				// 这个resolution就是指module，例如我们打包案例中的index这个bundle中就有 acorn、user 这两个 resolution
 				this.includedNamespaces.add(resolution);
 				this.ensureReexportsAreAvailableForModule(resolution);
 			}

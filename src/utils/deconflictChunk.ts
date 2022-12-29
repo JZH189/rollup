@@ -60,6 +60,7 @@ export function deconflictChunk(
 ): void {
 	const reversedModules = [...modules].reverse();
 	for (const module of reversedModules) {
+		//添加 usedNames
 		module.scope.addUsedOutsideNames(
 			usedNames,
 			format,

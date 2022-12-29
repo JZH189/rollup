@@ -1,6 +1,6 @@
-import { age, foo, name } from './user';
 import * as acorn from 'acorn';
-console.log('acorn: ', acorn);
+import { age, foo, name } from './user';
+console.log('acorn:', acorn);
 const user = import('./user');
 
 const fname = foo();

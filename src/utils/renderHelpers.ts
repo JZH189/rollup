@@ -98,6 +98,7 @@ export function renderStatementList(
 	let currentNode, currentNodeStart, currentNodeNeedsBoundaries, nextNodeStart;
 	let nextNode = statements[0];
 	let nextNodeNeedsBoundaries = !nextNode.included || nextNode.needsBoundaries;
+	//更新nextNodeStart的位置
 	if (nextNodeNeedsBoundaries) {
 		nextNodeStart =
 			start + findFirstLineBreakOutsideComment(code.original.slice(start, nextNode.start))[1];
@@ -124,6 +125,7 @@ export function renderStatementList(
 					  })
 					: currentNode.render(code, options);
 			} else {
+				//code.remove(start, end)
 				treeshakeNode(currentNode, code, currentNodeStart!, nextNodeStart);
 			}
 		} else {

@@ -2,8 +2,9 @@ import type Module from '../Module';
 
 function guessIndentString(code: string): string | null {
 	const lines = code.split('\n');
-
+	//匹配缩进的代码行
 	const tabbed = lines.filter(line => /^\t+/.test(line));
+	//匹配至少重复2次的空格代码行
 	const spaced = lines.filter(line => /^ {2,}/.test(line));
 
 	if (tabbed.length === 0 && spaced.length === 0) {
