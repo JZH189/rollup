@@ -51,8 +51,12 @@ export async function renderChunks(
 
 	timeEnd('render chunks', 2);
 	timeStart('transform chunks', 2);
-	//生成 chunkGraph
+	// 生成chunkGraph：{acorn-!~{001}~.js: {…}, index.js: {…}}
 	const chunkGraph = getChunkGraph(chunks);
+	/**
+	 * transformChunksAndGenerateContentHashes 方法
+	 * 它内部执行了 'renderChunk' 钩子函数转换 chunk 并生成 code 和 sourcemap 。
+	 */
 	const {
 		nonHashedChunksWithPlaceholders,
 		renderedChunksByPlaceholder,
@@ -64,11 +68,14 @@ export async function renderChunks(
 		pluginDriver,
 		onwarn
 	);
+	//generateFinalHashes 用于生成 bundle.fileName 的 hash 值
+	//hashesByPlaceholder Map: { !~{001}~ => bf6b1c54 }
 	const hashesByPlaceholder = generateFinalHashes(
 		renderedChunksByPlaceholder,
 		hashDependenciesByPlaceholder,
 		bundle
 	);
+	// 执行 bundle[finalFileName] = chunk.generateOutputChunk() 来更新 bundle 。
 	addChunksToBundle(
 		renderedChunksByPlaceholder,
 		hashesByPlaceholder,
@@ -91,6 +98,12 @@ function reserveEntryChunksInBundle(chunks: Chunk[]) {
 }
 
 function getChunkGraph(chunks: Chunk[]) {
+	/**
+	  Object.fromEntries() 执行与 Object.entries 互逆的操作。例如：
+	  const map = new Map([ ['foo', 'bar'], ['baz', 42] ]);
+		const obj = Object.fromEntries(map);
+		console.log(obj); // { foo: "bar", baz: 42 }
+	 */
 	return Object.fromEntries(
 		chunks.map(chunk => {
 			const renderedChunkInfo = chunk.getRenderedChunkInfo();
@@ -110,6 +123,7 @@ async function transformChunk(
 ) {
 	let map: SourceMap | null = null;
 	const sourcemapChain: DecodedSourceMapOrMissing[] = [];
+	// 执行 'renderChunk' 钩子函数，对源码进行加工处理并返回
 	let code = await outputPluginDriver.hookReduceArg0(
 		'renderChunk',
 		[magicString.toString(), chunkGraph[fileName], options, { chunks: chunkGraph }],
@@ -141,7 +155,7 @@ async function transformChunk(
 		sourcemapPathTransform
 	} = options;
 	if (!compact && code[code.length - 1] !== '\n') code += '\n';
-
+	//是否生成sourcemap
 	if (sourcemap) {
 		timeStart('sourcemaps', 3);
 

@@ -1172,6 +1172,7 @@ export default class Chunk {
 			let renderedLength = 0;
 			let source: MagicString | undefined;
 			if (module.isIncluded() || includedNamespaces.has(module)) {
+				//module.render 实际上就是执行了 this.ast!.render(source, options); 调用节点自身的 render 方法。
 				const rendered = module.render(renderOptions);
 				({ source } = rendered);
 				usesTopLevelAwait ||= rendered.usesTopLevelAwait;

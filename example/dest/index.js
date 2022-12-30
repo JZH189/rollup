@@ -8,15 +8,15 @@ function foo() {
 	return 'foo';
 }
 
-var user$2 = /*#__PURE__*/Object.freeze({
+var user$1 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	name: name,
 	age: age,
 	foo: foo
 });
 
-console.log('acorn: ', acorn);
-const user = Promise.resolve().then(function () { return user$2; });
+console.log('acorn:', acorn);
+const user = Promise.resolve().then(function () { return user$1; });
 
 const fname = foo();
 {
