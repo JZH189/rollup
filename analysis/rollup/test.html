@@ -1,85 +1,84 @@
 <script>
 	//我们以红点位置为坐标{0,0}，绿色位置坐标为{2,2}
-	//目标的坐标位置
-	let target = {
-		x: 0,
-		y: 0
-	};
-	let currentLocation = {
-		x: 2,
-		y: 2
-	};
-	let used = []; //用来标记地图上哪些点是走过的
-	let reached = false; //是否能到达目标位置
-	// 表示灰色区域的格子
-	const illegalLocation = [
-		{ x: 0, y: 2 }, //序号1的坐标
-		{ x: 0, y: 1 }, //序号4的坐标
-		{ x: 1, y: 1 }, //序号5的坐标
-		{ x: 2, y: 2 } //序号6的坐标
-	];
+//目标的坐标位置
+let target = {
+  x: 0,
+  y: 0
+};
+//绿色起点的坐标位置
+let currentLocation = {
+  x: 2,
+  y: 2
+};
+let used = []; //用来标记地图上哪些点是走过的
+let reached = false; //是否能到达目标位置
+// 表示灰色区域的格子
+const illegalLocation = [
+  { x: 0, y: 2 }, //序号1的坐标
+  { x: 0, y: 1 }, //序号4的坐标
+  { x: 1, y: 1 }, //序号5的坐标
+  { x: 2, y: 1 } //序号5的坐标
+];
 
-	function isLegalLocation({ x, y }) {
-		let flag = true;
-		//位置不能在地图坐标之外
-		if (x < 0 || x > 2 || y < 0 || y > 2) {
-			return (flag = false);
-		}
-		//走过的路径和不能走的路径都需要计算
-		const illegalArray = illegalLocation.concat(used);
-		for (const { x: locX, y: locY } of illegalArray) {
-			if (x === locX && y === locY) {
-				flag = false;
-			}
-		}
-		return flag;
-	}
+function isLegalLocation({ x, y }, illegalLocation) {
+  let flag = true;
+  //位置不能在地图坐标之外
+  if (x < 0 || x > 2 || y < 0 || y > 2) {
+    return (flag = false);
+  }
+  //不能走的路径
+  for (const { x: locX, y: locY } of illegalLocation) {
+    if (x === locX && y === locY) {
+      flag = false;
+    }
+  }
+  return flag;
+}
 
-	//向左移动
-	function toLeft({ x, y }) {
-		return { x: x - 1, y };
-	}
+//向左移动
+function toLeft({ x, y }) {
+  return { x: x - 1, y };
+}
 
-	//向上移动
-	function toTop({ x, y }) {
-		return { x, y: y + 1 };
-	}
+//向上移动
+function toTop({ x, y }) {
+  return { x, y: y + 1 };
+}
 
-	//向右移动
-	function toRight({ x, y }) {
-		return { x: x + 1, y };
-	}
+//向右移动
+function toRight({ x, y }) {
+  return { x: x + 1, y };
+}
 
-	//向下移动
-	function toBottom({ x, y }) {
-		return { x, y: y - 1 };
-	}
+//向下移动
+function toBottom({ x, y }) {
+  return { x, y: y - 1 };
+}
 
-	function dfs(target, location, illegalLocation, used) {
-		// 如果当前位置与目标坐标相同表示可以抵达
-		if (Object.entries(target).toString() === Object.entries(location).toString()) {
-			console.log('location', JSON.stringify(location));
-			return (reached = true);
-		}
-		let current = location;
-		//遍历四个方向
-		if (isLegalLocation(toLeft(location))) {
-			current = toLeft(location);
-		} else if (isLegalLocation(toTop(location))) {
-			current = toTop(location);
-		} else if (isLegalLocation(toRight(location))) {
-			current = toRight(location);
-		} else if (isLegalLocation(toBottom(location))) {
-			current = toBottom(location);
-		}
-		if (isLegalLocation(current) && !reached) {
-			used.push(current); //将刚才走过的格子标记为已走过
-			dfs(target, current, illegalLocation, used); //递归下去
-			used.pop(); //状态回溯，退回来
-		}
-		return (reached = false);
-	}
+function dfs(target, location, illegalLocation, used) {
+  // 如果当前位置与目标坐标相同表示可以抵达
+  if (Object.entries(target).toString() === Object.entries(location).toString()) {
+    console.log('reached', location);
+    return (reached = true);
+  }
+  let current = location;
+  const newIllegalLocation = illegalLocation.concat(used);
+  //假设按照“左>上>右>下”的顺序走
+  if (isLegalLocation(toLeft(location), newIllegalLocation)) {
+    current = toLeft(location);
+  } else if (isLegalLocation(toTop(location), newIllegalLocation)) {
+    current = toTop(location);
+  } else if (isLegalLocation(toRight(location), newIllegalLocation)) {
+    current = toRight(location);
+  } else if (isLegalLocation(toBottom(location), newIllegalLocation)) {
+    current = toBottom(location);
+  } else {
+		//走不通了就直接返回
+    return false
+  }
+  used.push(current); //将刚才走过的格子标记为已走过
+  return dfs(target, current, illegalLocation, used); //递归下去
+}
 
-	dfs(target, currentLocation, illegalLocation, used);
-	console.log('reached', reached);
+dfs(target, currentLocation, illegalLocation, used);
 </script>

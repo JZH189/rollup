@@ -2,9 +2,9 @@
 
 Depth first search 称作「深度优先遍历」
 
-下面结合具体例子来理解。如图所示，在一个九宫格图中，绿色位置代表起始位置，红色位置代表终点，灰色区域和宫格图的边界代表此路不通，问是否可以到达终点位置？
+下面结合具体例子来理解。如图所示，在一个九宫格图中，绿色位置代表起始位置，红色代表终点位置，灰色区域和宫格图的边界代表此路不通，请从起始位置按照每次只能移动一格的方法移动到终点位置。
 
-<img src="../images/dfs.png" width="400" height="400" />
+<img src="../images/dfsLocation.png" width="400" height="400" />
 
 我们用 DFS 的方法去解这道题，由图可知，我们可以走上下左右四个方向，我们不妨先约定 “左>上>右>下” 的顺序走，即，如果左边可以走，我们先走左边。然后「递归」下去，没达到终点，我们再原路返回，等又返回到这个位置时，左边已经走过了，那么我们就走上面，按照这样的顺序走。并且我们把走过的路（方向）作标记表示“不能走回头路”。
 
@@ -34,6 +34,7 @@ let target = {
   x: 0,
   y: 0
 };
+//绿色起点的坐标位置
 let currentLocation = {
   x: 2,
   y: 2
@@ -47,15 +48,14 @@ const illegalLocation = [
   { x: 1, y: 1 } //序号5的坐标
 ];
 
-function isLegalLocation({ x, y }) {
+function isLegalLocation({ x, y }, illegalLocation) {
   let flag = true;
   //位置不能在地图坐标之外
   if (x < 0 || x > 2 || y < 0 || y > 2) {
     return (flag = false);
   }
-  //走过的路径和不能走的路径都需要计算
-  const illegalArray = illegalLocation.concat(used);
-  for (const { x: locX, y: locY } of illegalArray) {
+  //不能走的路径
+  for (const { x: locX, y: locY } of illegalLocation) {
     if (x === locX && y === locY) {
       flag = false;
     }
@@ -86,29 +86,29 @@ function toBottom({ x, y }) {
 function dfs(target, location, illegalLocation, used) {
   // 如果当前位置与目标坐标相同表示可以抵达
   if (Object.entries(target).toString() === Object.entries(location).toString()) {
-    console.log('location', JSON.stringify(location));
+    console.log('reached', location);
     return (reached = true);
   }
   let current = location;
-  //遍历四个方向
-  if (isLegalLocation(toLeft(location))) {
+  const newIllegalLocation = illegalLocation.concat(used);
+  //假设按照“左>上>右>下”的顺序走
+  if (isLegalLocation(toLeft(location), newIllegalLocation)) {
     current = toLeft(location);
-  } else if (isLegalLocation(toTop(location))) {
+  } else if (isLegalLocation(toTop(location), newIllegalLocation)) {
     current = toTop(location);
-  } else if (isLegalLocation(toRight(location))) {
+  } else if (isLegalLocation(toRight(location), newIllegalLocation)) {
     current = toRight(location);
-  } else if (isLegalLocation(toBottom(location))) {
+  } else if (isLegalLocation(toBottom(location), newIllegalLocation)) {
     current = toBottom(location);
+  } else {
+		//走不通了就直接返回
+    return false
   }
-  if (isLegalLocation(current) && !reached) {
-    used.push(current); //将刚才走过的格子标记为已走过
-    dfs(target, current, illegalLocation, used); //递归下去
-    used.pop(); //状态回溯，退回来
-  }
+  used.push(current); //将刚才走过的格子标记为已走过
+  return dfs(target, current, illegalLocation, used); //递归下去
 }
 
 dfs(target, currentLocation, illegalLocation, used);
-console.log('reached', reached);
 ```
 
 # BFS(Breadth first search)
@@ -117,26 +117,114 @@ Breadth first search 称作「广度优先遍历」
 
 BFS 较之 DFS 之不同在于，BFS 旨在面临一个路口时，把所有的岔路口都记下来，然后选择其中一个进入，然后将它的分路情况记录下来，然后再返回来进入另外一个岔路，并重复这样的操作，用图形来表示则是这样的：
 
-<img src="../images/bfs1.png" width="400" height="400" />
+<img src="../images/bfsLocation1.png" width="400" height="400" />
 
-从绿色起点出发，记录所有的岔路口，并标记为走一步可以到达的。然后选择其中一个方向走进去，我们走绿色上面的那个格子，然后将这个路口可走的方向记录下来并标记为 2，意味走两步可以到达的地方。
+从绿色起点出发，记录所有的岔路口，并标记为走一步可以到达的。然后选择其中一个方向走进去，我们走绿色左边（序号为 2）的那个格子，然后将这个路口可走的方向记录下来并标记为 2，意味走两步可以到达的地方。
 
-<img src="../images/bfs2.png" width="400" height="400" />
+<img src="../images/bfsLocation2.png" width="400" height="400" />
 
-接下来，我们回到绿色起点右边的 1 方块上，并将它能走的方向也记录下来，同样标记为 2，因为也是走两步便可到达的地方。这样走一步以及走两步可以到达的地方都搜索完毕了，后续同理，我们可以把走三步的格子给标记出来。
+接下来，我们回到起点下面 1 的方块上（序号为 6），并将它能走的方向也记录下来，同样标记为 2，因为也是走两步便可到达的地方。这样走一步以及走两步可以到达的地方都搜索完毕了，后续同理，我们可以把走三步的格子给标记出来。
 
-<img src="../images/bfs3.png" width="400" height="400" />
+<img src="../images/bfsLocation3.png" width="400" height="400" />
 
 再之后是第四步。我们便成功寻找到了路径，并且把所有可行的路径都求出来了。
 
-<img src="../images/bfs4.png" width="400" height="400" />
+<img src="../images/bfsLocation4.png" width="400" height="400" />
 
-在 BFS 中是逐步求解的，反复的进入与退出，将当前的所有可行解都记录下来，然后逐个去查看。关键点是状态的选取和标记。在 DFS 中我们说关键点是递归以及回溯。
+> 注意：格子序号分别为 1、4、5 的地方是灰色区域表示此路不通。
 
 使用 BFS 来解答刚才题目的代码如下：
 
 ```js
+//我们以红点位置为坐标{0,0}，绿色位置坐标为{2,2}
+//目标的坐标位置
+let target = {
+  x: 0,
+  y: 0
+};
+//绿色起点的坐标位置
+let currentLocation = {
+  x: 2,
+  y: 2
+};
+// 表示灰色区域的格子
+const illegalLocation = [
+  { x: 0, y: 2 }, //序号1的坐标
+  { x: 0, y: 1 }, //序号4的坐标
+  { x: 1, y: 1 } //序号5的坐标
+];
 
+function isLegalLocation({ x, y }, illegalLocation) {
+  let flag = true;
+  //位置不能在地图坐标之外
+  if (x < 0 || x > 2 || y < 0 || y > 2) {
+    return (flag = false);
+  }
+  //不能走的路径
+  for (const { x: locX, y: locY } of illegalLocation) {
+    if (x === locX && y === locY) {
+      flag = false;
+    }
+  }
+  return flag;
+}
+
+//向左移动
+function toLeft({ x, y }) {
+  return { x: x - 1, y };
+}
+
+//向上移动
+function toTop({ x, y }) {
+  return { x, y: y + 1 };
+}
+
+//向右移动
+function toRight({ x, y }) {
+  return { x: x + 1, y };
+}
+
+//向下移动
+function toBottom({ x, y }) {
+  return { x, y: y - 1 };
+}
+
+function bfs(target, location, illegalLocation) {
+  let reached = false; //是否能到达目标位置
+  let stack = [];  
+  let searched = new Set(); //已经走过的格子
+  stack.push(location);
+  while (stack.length) {
+    let temp = stack.pop();
+    const newIllegalLocation = illegalLocation.concat([...searched]);
+    //假设按照“左>上>右>下”的顺序走
+    if (isLegalLocation(toLeft(temp), newIllegalLocation)) {
+      temp = toLeft(temp);
+    } else if (isLegalLocation(toTop(temp), newIllegalLocation)) {
+      temp = toTop(temp);
+    } else if (isLegalLocation(toRight(temp), newIllegalLocation)) {
+      temp = toRight(temp);
+    } else if (isLegalLocation(toBottom(temp), newIllegalLocation)) {
+      temp = toBottom(temp);
+    } else {
+      //没有通路就直接返回
+      return false
+    }
+    searched.add(temp);
+    stack.push(temp);
+    for (const { x: locX, y: locY } of searched) {
+      if (target.x === locX && target.y === locY) {
+        //如果当前位置与目标坐标相同表示可以抵达
+        reached = true;
+        console.log('reached: ', reached);
+        stack = [];
+        break;
+      }
+    }
+  }
+  return reached;
+}
+bfs(target, currentLocation, illegalLocation);
 ```
 
 「广度优先遍历」的思想在生活中随处可见：
