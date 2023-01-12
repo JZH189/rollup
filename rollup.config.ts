@@ -96,7 +96,17 @@ export default async function (
 		strictDeprecations: true,
 		treeshake
 	};
-
+	/**
+	 * 
+	当我们执行npm run build 的时候就相当于执行了 rollup --config rollup.config.ts --configPlugin typescript
+	此时 command 就是如下对象：
+	{ 
+		_: [],
+		config: 'rollup.config.ts',
+		c: 'rollup.config.ts',     
+		configPlugin: 'typescript' 
+	}
+	*/
 	if (command.configTest) {
 		return commonJSBuild;
 	}

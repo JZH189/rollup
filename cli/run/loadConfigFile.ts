@@ -23,6 +23,7 @@ export async function loadConfigFile(
 	fileName: string,
 	commandOptions: any = {}
 ): Promise<{ options: MergedRollupOptions[]; warnings: BatchWarnings }> {
+	//获取配置文件的export和命令行参数的合并结果
 	const configs = await getConfigList(
 		getDefaultFromCjs(await getConfigFileExport(fileName, commandOptions)),
 		commandOptions
