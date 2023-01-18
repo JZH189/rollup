@@ -151,7 +151,7 @@ let currentLocation = {
 const illegalLocation = [
   { x: 0, y: 2 }, //序号1的坐标
   { x: 0, y: 1 }, //序号4的坐标
-  { x: 1, y: 1 } //序号5的坐标
+  { x: 1, y: 1 }, //序号5的坐标
 ];
 
 function isLegalLocation({ x, y }, illegalLocation) {
@@ -189,30 +189,39 @@ function toBottom({ x, y }) {
   return { x, y: y - 1 };
 }
 
+function search(location, illegalLocation) {
+  let locations = new Set()
+  //假设按照“左>上>右>下”的顺序走
+  if (isLegalLocation(toLeft(location), illegalLocation)) {
+    locations.add(toLeft(location))
+  } 
+  if (isLegalLocation(toTop(location), illegalLocation)) {
+    locations.add(toTop(location))
+  }
+  if (isLegalLocation(toRight(location), illegalLocation)) {
+    locations.add(toRight(location))
+  }
+  if (isLegalLocation(toBottom(location), illegalLocation)) {
+    locations.add(toBottom(location))
+  }
+  return locations
+}
+
 function bfs(target, location, illegalLocation) {
   let reached = false; //是否能到达目标位置
   let stack = [];  
-  let searched = new Set(); //已经走过的格子
+  let searched = new Set() //已经走过的格子
   stack.push(location);
-  while (stack.length) {
-    let temp = stack.pop();
+  while(stack.length) {
+    const current = stack.shift()
     const newIllegalLocation = illegalLocation.concat([...searched]);
-    //假设按照“左>上>右>下”的顺序走
-    if (isLegalLocation(toLeft(temp), newIllegalLocation)) {
-      temp = toLeft(temp);
-    } else if (isLegalLocation(toTop(temp), newIllegalLocation)) {
-      temp = toTop(temp);
-    } else if (isLegalLocation(toRight(temp), newIllegalLocation)) {
-      temp = toRight(temp);
-    } else if (isLegalLocation(toBottom(temp), newIllegalLocation)) {
-      temp = toBottom(temp);
-    } else {
-      //没有通路就直接返回
-      return false
-    }
-    searched.add(temp);
-    stack.push(temp);
-    for (const { x: locX, y: locY } of searched) {
+    //先看到的先遍历
+    const searchedSet = search(current, newIllegalLocation)
+    Array.from(searchedSet).forEach((el) => {
+      searched.add(el)
+    })
+    for (const { x: locX, y: locY } of searchedSet) {
+      stack.push({ x: locX, y: locY })
       if (target.x === locX && target.y === locY) {
         //如果当前位置与目标坐标相同表示可以抵达
         reached = true;
