@@ -27,7 +27,7 @@ npm install --global rollup
 
 **简单来说就是当你使用 npm install 的时候 npm 会自动为你创建对应的可执行文件。如果是使用 npm install 的方式则会将对应的可执行文件放在 /node_modules/.bin 目录下。如果使用 npm install --global 的方式，对应的可执行文件在 Unix 上会放在{prefix}/bin 目录，在 Windows 上则是 {prefix} 目录。**
 
-可执行文件包括三个：
+当你执行 npm run 的时候，npm 会在 node 环境变量（Path）中（例如 C:\Users\victorjiang\AppData\Roaming\npm）找到对应的 node 可执行文件并且运行它。可执行文件包括三个：
 
 - rollup：Unix 系默认的可执行文件，必须输入完整文件名
 - rollup.cmd：windows cmd 中默认的可执行文件
