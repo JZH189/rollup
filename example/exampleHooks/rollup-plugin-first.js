@@ -25,7 +25,7 @@ function first() {
 			//...
 		},
 		load(id) {
-			console.log('id: ', id);
+			// console.log('id: ', id);
 		}
 	};
 }
