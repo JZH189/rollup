@@ -28,7 +28,7 @@ function alias({ entries }) {
 				return null;
 			}
 			const updatedId = source.replace(matchedEntry.source, matchedEntry.replacement);
-			// this.resolve方法使用与 Rollup 相同的插件将 importer 中的 source 替换为包含 updatedId 的 ResolvedId 对象
+			// this.resolve方法使用与 Rollup 相同的插件将 ResolvedId 对象中的 id 设置为 updatedId 并返回这个新对象
 			const result = await this.resolve(updatedId, importer, resolveOptions);
 			/**
       result: {
