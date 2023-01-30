@@ -573,6 +573,7 @@ export class ModuleLoader {
 	// 设置module.resolvedIds
 	private getResolveStaticDependencyPromises(module: Module): ResolveStaticDependencyPromise[] {
 		// eslint-disable-next-line unicorn/prefer-spread
+		//handleInvalidResolvedId 方法执行后如果根据id未找到对应的模块就会报警告，然后将对应的模块视为external
 		return Array.from(
 			module.sourcesWithAssertions,
 			async ([source, assertions]) =>
