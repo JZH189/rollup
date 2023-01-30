@@ -20,8 +20,8 @@ module.exports = {
 	},
 	plugins: [
 		nodeResolve(),
-		aliasPlugin({ entries: [{ source: 'user', replacement: `${projectRootDir}/user.js` }] }),
 		firstPlugin(),
-		secondPlugin()
+		secondPlugin(),
+		aliasPlugin({ entries: [{ source: 'user', replacement: `${projectRootDir}/user.js` }] })
 	]
 };

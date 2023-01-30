@@ -19,14 +19,14 @@ MIT, ISC
 ## @rollup/pluginutils
 License: MIT
 By: Rich Harris
-Repository: rollup/plugins
+Repository: git+https://github.com/rollup/plugins.git
 
 ---------------------------------------
 
 ## acorn
 License: MIT
 By: Marijn Haverbeke, Ingvar Stepanyan, Adrian Heine
-Repository: https://github.com/acornjs/acorn.git
+Repository: git+https://github.com/acornjs/acorn.git
 
 > MIT License
 > 
@@ -55,14 +55,14 @@ Repository: https://github.com/acornjs/acorn.git
 ## acorn-import-assertions
 License: MIT
 By: Sven Sauleau
-Repository: https://github.com/xtuc/acorn-import-assertions
+Repository: git+https://github.com/xtuc/acorn-import-assertions.git
 
 ---------------------------------------
 
 ## acorn-walk
 License: MIT
 By: Marijn Haverbeke, Ingvar Stepanyan, Adrian Heine
-Repository: https://github.com/acornjs/acorn.git
+Repository: git+https://github.com/acornjs/acorn.git
 
 > MIT License
 > 
@@ -91,13 +91,13 @@ Repository: https://github.com/acornjs/acorn.git
 ## hash.js
 License: MIT
 By: Fedor Indutny
-Repository: git@github.com:indutny/hash.js
+Repository: git+ssh://git@github.com/indutny/hash.js.git
 
 ---------------------------------------
 
 ## inherits
 License: ISC
-Repository: git://github.com/isaacs/inherits
+Repository: git://github.com/isaacs/inherits.git
 
 > The ISC License
 > 
@@ -127,14 +127,14 @@ Repository: git+https://github.com/Rich-Harris/is-reference.git
 ## locate-character
 License: MIT
 By: Rich Harris
-Repository: Rich-Harris/locate-character
+Repository: git+https://github.com/Rich-Harris/locate-character.git
 
 ---------------------------------------
 
 ## magic-string
 License: MIT
 By: Rich Harris
-Repository: https://github.com/rich-harris/magic-string
+Repository: git+https://github.com/rich-harris/magic-string.git
 
 > Copyright 2018 Rich Harris
 > 
@@ -148,7 +148,7 @@ Repository: https://github.com/rich-harris/magic-string
 
 ## minimalistic-assert
 License: ISC
-Repository: https://github.com/calvinmetcalf/minimalistic-assert.git
+Repository: git+https://github.com/calvinmetcalf/minimalistic-assert.git
 
 > Copyright 2015 Calvin Metcalf
 > 
@@ -169,7 +169,7 @@ Repository: https://github.com/calvinmetcalf/minimalistic-assert.git
 ## sourcemap-codec
 License: MIT
 By: Rich Harris
-Repository: https://github.com/Rich-Harris/sourcemap-codec
+Repository: git+https://github.com/Rich-Harris/sourcemap-codec.git
 
 > The MIT License
 > 
