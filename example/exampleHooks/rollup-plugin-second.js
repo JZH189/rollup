@@ -9,7 +9,8 @@ function second() {
 		},
 		//当您需要访问传递给 rollup.rollup 的选项时，这是比较推荐使用的钩子，因为它包含了未设置的默认值。
 		buildStart: {
-			order: 'pre',
+			// sequential: true, //设置了此选项则不入栈，优先执行
+			first: true,
 			handler(InputOptions) {
 				console.log('second buildStart: ');
 				return null;

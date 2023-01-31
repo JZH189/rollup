@@ -114,6 +114,7 @@ async function getInputOptions(
 		'options',
 		await normalizePluginOption(rawInputOptions.plugins)
 	);
+	//此处运行 options 钩子
 	const { options, unsetOptions } = await normalizeInputOptions(
 		await rawPlugins.reduce(applyOptionHook(watchMode), Promise.resolve(rawInputOptions))
 	);

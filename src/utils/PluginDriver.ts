@@ -321,6 +321,7 @@ export class PluginDriver {
 					return handler;
 				}
 				// eslint-disable-next-line @typescript-eslint/ban-types
+				// 此处使用了handler.apply(context, parameters)修改了插件开发者提供的钩子函数this指向，因此可以在插件中直接使用this来调用插件上下文函数
 				const hookResult = (handler as Function).apply(context, parameters);
 
 				if (!hookResult?.then) {
@@ -383,7 +384,13 @@ export class PluginDriver {
 		}
 	}
 }
-
+/**
+ * 根据hook.order排序插件
+ * @param hookName
+ * @param plugins
+ * @param validateHandler
+ * @returns
+ */
 export function getSortedValidatedPlugins(
 	hookName: keyof FunctionPluginHooks | AddonHooks,
 	plugins: readonly Plugin[],
